@@ -7,18 +7,40 @@ const config = require('./config.json');
 // Create a WebhookClient object to send messages
 const webhookClient = new Discord.WebhookClient(config.webhookID, config.webhookToken);
 
+// Check initial stock
+currentStock = {}
 getStock()
-.then(function(resolve)
-{
-    restock = checkRestock(resolve)
-    // if (restock !== null) { restockAlert(restock) }
-    restockAlert(restock)
-})
-.catch(function(reject)
-{
-    console.log("Reject");
-    console.log(reject);
-});
+    .then(function(resolve)
+    {
+        for (var proxyType in resolve)
+        {
+            if (proxyType.includes("_Premium"))
+            {
+                currentStock[proxyType] = resolve[proxyType];
+            }
+        }
+    })
+    .catch(function(reject)
+    {
+        console.log("Rejected on initial check.");
+        process.exit(1);
+    });
+
+// Check to see if current stock changes
+setInterval(function(){
+    getStock()
+    .then(function(resolve)
+    {
+        restock = checkRestock(resolve);
+        console.log(restock);
+        if (restock !== null) { restockAlert(restock) }
+    })
+    .catch(function(reject)
+    {
+        console.log("Reject");
+        console.log(reject);
+    });    
+}, 5000)
 
 
 // -------------------------------------------------------------------------------------------- \\
@@ -29,7 +51,16 @@ getStock()
 // -------------------------------------------------------------------------------------------- \\
 function checkRestock(stockData)
 {
-    
+    restock = {};
+    for (var proxyType in currentStock)
+    {
+        if (stockData[proxyType] - currentStock[proxyType] > 0)
+        {
+            restock[proxyType] = stockData[proxyType] - currentStock[proxyType];
+        }
+    }
+    if (Object.keys(restock).length == 0) { return null }
+    else { return restock }
 }
 
 
