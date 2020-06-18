@@ -56,6 +56,7 @@ function checkRestock(stockData)
         if (stockData[proxyType] - currentStock[proxyType] > 0)
         {
             restock[proxyType] = stockData[proxyType] - currentStock[proxyType];
+            currentStock[proxyType] = stockData[proxyType];
         }
     }
     if (Object.keys(restock).length == 0) { return null }
