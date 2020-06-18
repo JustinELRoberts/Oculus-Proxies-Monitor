@@ -32,7 +32,6 @@ setInterval(function(){
     .then(function(resolve)
     {
         restock = checkRestock(resolve);
-        console.log(restock);
         if (restock !== null) { restockAlert(restock) }
     })
     .catch(function(reject)
