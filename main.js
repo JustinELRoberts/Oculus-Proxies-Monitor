@@ -97,6 +97,7 @@ function getStock()
 // -------------------------------------------------------------------------------------------- \\
 function decodeStock(proxyData)
 {
+    console.log(proxyData)
 	let hashids = new Hashids.default("oCuLU$", 8);
     let decodedRes = {};
     for (var proxyType in proxyData)
